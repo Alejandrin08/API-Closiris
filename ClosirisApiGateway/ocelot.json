@@ -1,0 +1,440 @@
+{
+    "Routes": [
+        {
+            "UpstreamPathTemplate": "/api/userAccount",
+            "UpstreamHttpMethod": [ "Post" ],
+            "DownstreamPathTemplate": "/api/users/userAccount",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 3000
+                }
+            ]
+        },
+        {
+            "UpstreamPathTemplate": "/api/user",
+            "UpstreamHttpMethod": [ "Post" ],
+            "DownstreamPathTemplate": "/api/users/user",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 3000
+                }
+            ]
+        },
+        {
+            "UpstreamPathTemplate": "/api/UserAccount",
+            "UpstreamHttpMethod": [ "Put" ],
+            "DownstreamPathTemplate": "/api/users/putUserAccount",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 3000
+                }
+            ],             
+            "AuthorizationOptions": {
+                "AuthenticationProviderKey": "Bearer",
+                "PolicyName": "cliente_valido",
+                "Scopes": [ "Users" ]
+            }
+        },
+        {
+            "UpstreamPathTemplate": "/api/Password",
+            "UpstreamHttpMethod": [ "Patch" ],
+            "DownstreamPathTemplate": "/api/users/patchPassword",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 3000
+                }
+            ]
+        },
+        {
+            "UpstreamPathTemplate": "/api/Plan",
+            "UpstreamHttpMethod": [ "Patch" ],
+            "DownstreamPathTemplate": "/api/users/patchPlan",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 3000
+                }
+            ],             
+            "AuthorizationOptions": {
+                "AuthenticationProviderKey": "Bearer",
+                "PolicyName": "cliente_valido",
+                "Scopes": [ "Users" ]
+            }
+        },
+        {
+            "UpstreamPathTemplate": "/api/FreeStorage",
+            "UpstreamHttpMethod": [ "Patch" ],
+            "DownstreamPathTemplate": "/api/users/patchFreeStorage",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 3000
+                }
+            ],
+            "AuthorizationOptions": {
+                "AuthenticationProviderKey": "Bearer",
+                "PolicyName": "usuario_valido",
+                "Scopes": [ "Users" ]
+            }
+        },
+        {
+            "UpstreamPathTemplate": "/api/EmailDuplicity/{email}",
+            "UpstreamHttpMethod": ["Get"],
+            "DownstreamPathTemplate": "/api/users/validateEmailDuplicity/{email}",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 3000
+                }
+            ]
+        }, 
+        {
+            "UpstreamPathTemplate": "/api/UserInfo",
+            "UpstreamHttpMethod": [ "Get" ],
+            "DownstreamPathTemplate": "/api/users/GetUserInfoById",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 3000
+                }
+            ],             
+            "AuthorizationOptions": {
+                "AuthenticationProviderKey": "Bearer",
+                "PolicyName": "cliente_valido",
+                "Scopes": [ "Users" ]
+            }
+        },
+        {
+            "UpstreamPathTemplate": "/api/Info/{email}",
+            "UpstreamHttpMethod": [ "Get" ],
+            "DownstreamPathTemplate": "/api/users/GetInfoByEmail/{email}",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 3000
+                }
+            ],             
+            "AuthorizationOptions": {
+                "AuthenticationProviderKey": "Bearer",
+                "PolicyName": "cliente_valido",
+                "Scopes": [ "Users" ]
+            }
+        },
+        {
+            "UpstreamPathTemplate": "/api/Users",
+            "UpstreamHttpMethod": [ "Get" ],
+            "DownstreamPathTemplate": "/api/users/GetListUsers",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 3000
+                }
+            ],             
+            "AuthorizationOptions": {
+                "AuthenticationProviderKey": "Bearer",
+                "PolicyName": "admi_valido",
+                "Scopes": [ "Users" ]
+            }
+        },
+
+
+
+
+
+
+
+
+
+
+        
+        {
+            "UpstreamPathTemplate": "/api/file",
+            "UpstreamHttpMethod": [ "Post" ],
+            "DownstreamPathTemplate": "/api/files/file",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 3002
+                }
+            ],
+            "AuthorizationOptions": {
+                "AuthenticationProviderKey": "Bearer",
+                "PolicyName": "cliente_valido",
+                "Scopes": [ "Files" ]
+            }
+        },
+        {
+            "UpstreamPathTemplate": "/api/fileOwner",
+            "UpstreamHttpMethod": [ "Post" ],
+            "DownstreamPathTemplate": "/api/files/fileOwner",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 3002
+                }
+            ],
+            "AuthorizationOptions": {
+                "AuthenticationProviderKey": "Bearer",
+                "PolicyName": "cliente_valido",
+                "Scopes": [ "Files" ]
+            }
+        },
+        {
+            "UpstreamPathTemplate": "/api/fileShared",
+            "UpstreamHttpMethod": [ "Post" ],
+            "DownstreamPathTemplate": "/api/files/fileShared",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 3002
+                }
+            ],
+            "AuthorizationOptions": {
+                "AuthenticationProviderKey": "Bearer",
+                "PolicyName": "premium_valido",
+                "Scopes": [ "Files" ]
+            }
+        },
+        {
+            "UpstreamPathTemplate": "/api/File",
+            "UpstreamHttpMethod": [ "Get" ],
+            "DownstreamPathTemplate": "/api/files/getFile",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 3002
+                }
+            ],
+            "AuthorizationOptions": {
+                "AuthenticationProviderKey": "Bearer",
+                "PolicyName": "cliente_valido",
+                "Scopes": [ "Files" ]
+            }
+        },
+        {
+            "UpstreamPathTemplate": "/api/ServerFile",
+            "UpstreamHttpMethod": [ "Delete" ],
+            "DownstreamPathTemplate": "/api/files/deleteFileServer",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 3002
+                }
+            ],
+            "AuthorizationOptions": {
+                "AuthenticationProviderKey": "Bearer",
+                "PolicyName": "cliente_valido",
+                "Scopes": [ "Files" ]
+            }
+        },
+        {
+            "UpstreamPathTemplate": "/api/FileShared",
+            "UpstreamHttpMethod": [ "Delete" ],
+            "DownstreamPathTemplate": "/api/files/deleteFileShared",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 3002
+                }
+            ],
+            "AuthorizationOptions": {
+                "AuthenticationProviderKey": "Bearer",
+                "PolicyName": "cliente_valido",
+                "Scopes": [ "Files" ]
+            }
+        },
+        {
+            "UpstreamPathTemplate": "/api/File",
+            "UpstreamHttpMethod": [ "Delete" ],
+            "DownstreamPathTemplate": "/api/files/deleteFile",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 3002
+                }
+            ],
+            "AuthorizationOptions": {
+                "AuthenticationProviderKey": "Bearer",
+                "PolicyName": "cliente_valido",
+                "Scopes": [ "Files" ]
+            }
+        },
+        {
+            "UpstreamPathTemplate": "/api/Folders",
+            "UpstreamHttpMethod": [ "Get" ],
+            "DownstreamPathTemplate": "/api/files/getFoldersByUser",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 3002
+                }
+            ],
+            "AuthorizationOptions": {
+                "AuthenticationProviderKey": "Bearer",
+                "PolicyName": "cliente_valido",
+                "Scopes": [ "Files" ]
+            }
+        }, 
+        {
+            "UpstreamPathTemplate": "/api/UsersShare",
+            "UpstreamHttpMethod": [ "Get" ],
+            "DownstreamPathTemplate": "/api/files/getUsersShareFile",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 3002
+                }
+            ],
+            "AuthorizationOptions": {
+                "AuthenticationProviderKey": "Bearer",
+                "PolicyName": "cliente_valido",
+                "Scopes": [ "Files" ]
+            }
+        },
+        {
+            "UpstreamPathTemplate": "/api/UsersOwner",
+            "UpstreamHttpMethod": [ "Get" ],
+            "DownstreamPathTemplate": "/api/files/getUsersOwnerFile",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 3002
+                }
+            ],
+            "AuthorizationOptions": {
+                "AuthenticationProviderKey": "Bearer",
+                "PolicyName": "cliente_valido",
+                "Scopes": [ "Files" ]
+            }
+        },
+        {
+            "UpstreamPathTemplate": "/api/FileInfo",
+            "UpstreamHttpMethod": [ "Get" ],
+            "DownstreamPathTemplate": "/api/files/getListOfFileInfoByUser",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 3002
+                }
+            ],
+            "AuthorizationOptions": {
+                "AuthenticationProviderKey": "Bearer",
+                "PolicyName": "cliente_valido",
+                "Scopes": [ "Files" ]
+            }
+        },
+        {
+            "UpstreamPathTemplate": "/api/FileShared",
+            "UpstreamHttpMethod": [ "Get" ],
+            "DownstreamPathTemplate": "/api/files/getListOfFileSharedByUser",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 3002
+                }
+            ],
+            "AuthorizationOptions": {
+                "AuthenticationProviderKey": "Bearer",
+                "PolicyName": "cliente_valido",
+                "Scopes": [ "Files" ]
+            }
+        },
+        
+
+
+
+
+
+
+
+        {
+            "UpstreamPathTemplate": "/api",
+            "UpstreamHttpMethod": [ "Post" ],
+            "DownstreamPathTemplate": "/api/auth",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 3001
+                }
+            ]
+        },
+        {
+            "UpstreamPathTemplate": "/api/time",
+            "UpstreamHttpMethod": [ "Get" ],
+            "DownstreamPathTemplate": "/api/auth/time",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 3001
+                }
+            ],
+            "AuthorizationOptions": {
+                "AuthenticationProviderKey": "Bearer",
+                "PolicyName": "usuario_valido"
+            }
+        }, 
+        {
+            "UpstreamPathTemplate": "/api/Audit",
+            "UpstreamHttpMethod": [ "Get" ],
+            "DownstreamPathTemplate": "/api/auth/GetListAudit",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 3001
+                }
+            ],
+            "AuthorizationOptions": {
+                "AuthenticationProviderKey": "Bearer",
+                "PolicyName": "admi_valido"
+            }
+        }
+    ], 
+
+
+
+
+
+
+
+
+
+    "GlobalConfiguration": {
+        "BaseUrl": "http://*:5000",
+        "RateLimitOptions": {
+            "ClientWhitelist": [],
+            "EnableRateLimiting": true,
+            "Period": "1s",
+            "PeriodTimespan": 1,
+            "Limit": 100
+        }
+    }
+}

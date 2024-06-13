@@ -1,0 +1,6 @@
+@ClosirisApiGateway_HostAddress = http://*:5000
+
+GET {{ClosirisApiGateway_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

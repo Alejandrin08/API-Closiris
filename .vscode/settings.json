@@ -1,0 +1,5 @@
+{
+    "python.analysis.extraPaths": [
+        "./ClosirisFileServer/file_pb2_"
+    ]
+}
