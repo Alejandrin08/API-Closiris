@@ -3,6 +3,7 @@ const initModels = require('../models/init-models');
 const sequelize = require('../models/sequelize');
 const models = initModels(sequelize);
 const bcrypt = require('bcrypt');
+const { validationResult } = require('express-validator');
 const UserAccount = models.userAccount;
 const User = models.user;
 const { Op, Sequelize } = require('sequelize');
@@ -10,6 +11,10 @@ const { Op, Sequelize } = require('sequelize');
 let self = {};
 //POST: api/users/userAccount
 self.createUserAccount = async function (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
     try {
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
@@ -34,6 +39,10 @@ self.createUserAccount = async function (req, res) {
 
 //POST: api/users/user
 self.createUser = async function (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
     try {
         let data = await User.create({
             email: req.body.email,
@@ -49,6 +58,10 @@ self.createUser = async function (req, res) {
 
 //PUT: api/users/putUserAccount
 self.updateUserAccount = async function (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
     const userId = req.decoded[ClaimTypes.Id];
     const { email, name, imageProfile } = req.body;
 
@@ -73,6 +86,10 @@ self.updateUserAccount = async function (req, res) {
 
 //PATH: api/users/patchPassword
 self.updatePassword = async function (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
     const { email, password } = req.body;
 
     try {
@@ -94,6 +111,10 @@ self.updatePassword = async function (req, res) {
 
 //PATH: api/users/patchPlan
 self.updatePlan = async function (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
     const userId = req.decoded[ClaimTypes.Id];
     const { plan, freeStorage } = req.body;
 
@@ -115,6 +136,10 @@ self.updatePlan = async function (req, res) {
 
 //PATH: api/users/patchFreeStorage
 self.updateFreeStorage = async function (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
     const userId = req.decoded[ClaimTypes.Id];
     const { freeStorage } = req.body;
 
@@ -135,6 +160,10 @@ self.updateFreeStorage = async function (req, res) {
 
 //GET: api/users/ValidateEmailDuplicity
 self.validateEmailDuplicity = async function (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
     const email = req.params.email;
     try {
         let user = await UserAccount.findOne({ where: { email: email } });
@@ -185,6 +214,10 @@ self.getUserInfoById = async function (req, res) {
 };
 
 self.getUserInfoByEmail = async function (req, res){
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
     const emailUser = req.params.email;
     try {    
 

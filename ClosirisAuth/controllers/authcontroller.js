@@ -6,10 +6,15 @@ const User = models.user;
 const Audit = models.audit;
 const bcrypt = require('bcrypt');
 const { GenerateToken, VerifyToken } = require('../services/jwttokenservice');
+const { validationResult } = require('express-validator');
 
 let self = {};
 //POST: api/auth/
 self.login = async function (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
     try {
         let data = await UserAccount.findOne({
             where: { email: req.body.email },

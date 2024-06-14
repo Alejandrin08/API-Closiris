@@ -3,6 +3,7 @@ const initModels = require('../models/init-models');
 const sequelize = require('../models/sequelize');
 const models = initModels(sequelize);
 const { Op, Sequelize } = require('sequelize');
+const { validationResult } = require('express-validator');
 const dotenv = require('dotenv');
 dotenv.config();
 const File = models.file;
@@ -117,6 +118,10 @@ async function receiveFileFromServer(locationFile) {
 
 //POST: api/files/file
 self.insertFile = async function (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
     const MAX_FILE_SIZE = 4 * 1024 * 1024;
     const userId = req.decoded[ClaimTypes.Id];
     const folderName = req.headers['folder_name'];
@@ -151,6 +156,10 @@ self.insertFile = async function (req, res) {
 
 //GET: api/files/getFile/:id
 self.getFileFromServer = async function (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
     const fileId = req.headers['file_id'];
 
     if (!fileId) {
@@ -183,6 +192,10 @@ self.getFileFromServer = async function (req, res) {
 
 //Delete: api/files/deleteFile/:id
 self.deleteFilefromServer = async function (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
     const fileId = req.headers['file_id'];
 
     try {
@@ -206,6 +219,10 @@ self.deleteFilefromServer = async function (req, res) {
 
 //POST: api/files/fileOwner
 self.insertFileOwner = async function (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
     const userId = req.decoded[ClaimTypes.Id];
     const fileId = req.headers['file_id'];
 
@@ -230,6 +247,10 @@ self.insertFileOwner = async function (req, res) {
 
 //POST: api/files/fileShared
 self.insertFileShared = async function (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
     const userId = req.headers['shared_id'];
     const fileId = req.headers['file_id'];
 
@@ -265,6 +286,10 @@ self.insertFileShared = async function (req, res) {
 
 //DELETE: api/files/deleteFileShared
 self.deletefileShared = async function (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
     const userId = req.decoded[ClaimTypes.Id];
     const fileId = req.headers['file_id'];
 
@@ -287,7 +312,10 @@ self.deletefileShared = async function (req, res) {
 
 //DELETE: api/files/deleteFileRegistration
 self.deleteFileRegistration = async function (req, res) {
-
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
     const fileId = req.headers['file_id'];
 
     try {
@@ -314,6 +342,10 @@ self.deleteFileRegistration = async function (req, res) {
 
 //GET: api/users/getUsersShareFile
 self.getUsersShareFile = async function (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
     const fileId = req.headers['file_id'];
     try {
         const users = await UserAccount.findAll({
@@ -351,6 +383,10 @@ self.getUsersShareFile = async function (req, res) {
 };
 
 self.getUsersOwnerFile = async function (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
     const fileId = req.headers['file_id'];
     try {
         const users = await UserAccount.findAll({
@@ -420,6 +456,10 @@ self.getFoldersByUser = async function (req, res) {
 
 //GET: api/files/getListOfFileInfoByUser
 self.getListOfFileInfoByUser = async function (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
     const userId = req.decoded[ClaimTypes.Id];
     const folderName = req.headers['folder_name'];
     try {
