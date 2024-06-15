@@ -428,7 +428,7 @@
 
 
     "GlobalConfiguration": {
-        "BaseUrl": "http://*:5000",
+        "BaseUrl": "http://localhost:5089",
         "RateLimitOptions": {
             "ClientWhitelist": [],
             "EnableRateLimiting": true,

@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  apigateway:
+    image: imgapigateway
+    container_name: apigateway
+    restart: always
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    network_mode: "host"
+
+  apiusers:
+    image: imgapiusers
+    container_name: apiusers
+    restart: always
+    depends_on:
+      - apigateway
+    network_mode: "host"
+
+  apiauth:
+    image: imgauth
+    container_name: apiauth
+    restart: always
+    depends_on:
+      - apigateway
+    network_mode: "host"
+
+  apifiles:
+    image: imgapifiles
+    container_name: apifiles
+    restart: always
+    depends_on:
+      - apigateway
+    network_mode: "host"
+
+  apifileserver:
+    image: imgapifileserver
+    container_name: apifileserver
+    restart: always
+    depends_on:
+      - apifiles
+    network_mode: "host"
+    volumes:
+      - ClosirisFiles:/app/ClosirisFiles
+
+volumes:
+  ClosirisFiles:
+    driver: local

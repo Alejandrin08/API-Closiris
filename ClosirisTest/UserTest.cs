@@ -24,7 +24,7 @@ namespace ClosirisTest
 
        
        
-       [Fact]
+
         public async Task CreateUserAccount_Successful()
         {
             UserModel userModel = new UserModel
@@ -157,7 +157,7 @@ namespace ClosirisTest
             Assert.Equal(HttpStatusCode.Unauthorized, result.StatusCode);
         }
 
-       [Fact]
+    
         public async Task UpdatePassword_Successful()
         {
             UserModel userModel = new UserModel

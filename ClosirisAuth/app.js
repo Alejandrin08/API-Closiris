@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 var corsOptions = {
-    origin: ["http://localhost:5000"],
+    origin: ["http://localhost:5089"],
     methods: "GET,PUT,PATCH,POST,DELETE",
 };
 app.use(cors(corsOptions));
