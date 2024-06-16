@@ -2,7 +2,7 @@
     "Routes": [
         {
             "UpstreamPathTemplate": "/api/userAccount",
-            "UpstreamHttpMethod": [ "Post" ],
+            "UpstreamHttpMethod": [ "Post", "Put" ],
             "DownstreamPathTemplate": "/api/users/userAccount",
             "DownstreamScheme": "http",
             "DownstreamHostAndPorts": [
@@ -25,26 +25,9 @@
             ]
         },
         {
-            "UpstreamPathTemplate": "/api/UserAccount",
-            "UpstreamHttpMethod": [ "Put" ],
-            "DownstreamPathTemplate": "/api/users/putUserAccount",
-            "DownstreamScheme": "http",
-            "DownstreamHostAndPorts": [
-                {
-                    "Host": "localhost",
-                    "Port": 3000
-                }
-            ],             
-            "AuthorizationOptions": {
-                "AuthenticationProviderKey": "Bearer",
-                "PolicyName": "cliente_valido",
-                "Scopes": [ "Users" ]
-            }
-        },
-        {
-            "UpstreamPathTemplate": "/api/Password",
+            "UpstreamPathTemplate": "/api/password",
             "UpstreamHttpMethod": [ "Patch" ],
-            "DownstreamPathTemplate": "/api/users/patchPassword",
+            "DownstreamPathTemplate": "/api/users/password",
             "DownstreamScheme": "http",
             "DownstreamHostAndPorts": [
                 {
@@ -54,9 +37,9 @@
             ]
         },
         {
-            "UpstreamPathTemplate": "/api/Plan",
+            "UpstreamPathTemplate": "/api/plan",
             "UpstreamHttpMethod": [ "Patch" ],
-            "DownstreamPathTemplate": "/api/users/patchPlan",
+            "DownstreamPathTemplate": "/api/users/plan",
             "DownstreamScheme": "http",
             "DownstreamHostAndPorts": [
                 {
@@ -71,9 +54,9 @@
             }
         },
         {
-            "UpstreamPathTemplate": "/api/FreeStorage",
+            "UpstreamPathTemplate": "/api/freeStorage",
             "UpstreamHttpMethod": [ "Patch" ],
-            "DownstreamPathTemplate": "/api/users/patchFreeStorage",
+            "DownstreamPathTemplate": "/api/users/freeStorage",
             "DownstreamScheme": "http",
             "DownstreamHostAndPorts": [
                 {
@@ -88,7 +71,7 @@
             }
         },
         {
-            "UpstreamPathTemplate": "/api/EmailDuplicity/{email}",
+            "UpstreamPathTemplate": "/api/emailDuplicity/{email}",
             "UpstreamHttpMethod": ["Get"],
             "DownstreamPathTemplate": "/api/users/validateEmailDuplicity/{email}",
             "DownstreamScheme": "http",
@@ -100,9 +83,9 @@
             ]
         }, 
         {
-            "UpstreamPathTemplate": "/api/UserInfo",
+            "UpstreamPathTemplate": "/api/userInfo",
             "UpstreamHttpMethod": [ "Get" ],
-            "DownstreamPathTemplate": "/api/users/GetUserInfoById",
+            "DownstreamPathTemplate": "/api/users/userInfoById",
             "DownstreamScheme": "http",
             "DownstreamHostAndPorts": [
                 {
@@ -117,9 +100,9 @@
             }
         },
         {
-            "UpstreamPathTemplate": "/api/Info/{email}",
+            "UpstreamPathTemplate": "/api/info/{email}",
             "UpstreamHttpMethod": [ "Get" ],
-            "DownstreamPathTemplate": "/api/users/GetInfoByEmail/{email}",
+            "DownstreamPathTemplate": "/api/users/infoByEmail/{email}",
             "DownstreamScheme": "http",
             "DownstreamHostAndPorts": [
                 {
@@ -134,9 +117,9 @@
             }
         },
         {
-            "UpstreamPathTemplate": "/api/Users",
+            "UpstreamPathTemplate": "/api/users",
             "UpstreamHttpMethod": [ "Get" ],
-            "DownstreamPathTemplate": "/api/users/GetListUsers",
+            "DownstreamPathTemplate": "/api/users/listUsers",
             "DownstreamScheme": "http",
             "DownstreamHostAndPorts": [
                 {
@@ -163,7 +146,7 @@
         
         {
             "UpstreamPathTemplate": "/api/file",
-            "UpstreamHttpMethod": [ "Post" ],
+            "UpstreamHttpMethod": [ "Post", "Get", "Delete" ],
             "DownstreamPathTemplate": "/api/files/file",
             "DownstreamScheme": "http",
             "DownstreamHostAndPorts": [
@@ -197,7 +180,7 @@
         },
         {
             "UpstreamPathTemplate": "/api/fileShared",
-            "UpstreamHttpMethod": [ "Post" ],
+            "UpstreamHttpMethod": [ "Post", "Delete" ],
             "DownstreamPathTemplate": "/api/files/fileShared",
             "DownstreamScheme": "http",
             "DownstreamHostAndPorts": [
@@ -213,77 +196,26 @@
             }
         },
         {
-            "UpstreamPathTemplate": "/api/File",
+            "UpstreamPathTemplate": "/api/serverFile",
+            "UpstreamHttpMethod": [ "Delete" ],
+            "DownstreamPathTemplate": "/api/files/fileServer",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 3002
+                }
+            ],
+            "AuthorizationOptions": {
+                "AuthenticationProviderKey": "Bearer",
+                "PolicyName": "cliente_valido",
+                "Scopes": [ "Files" ]
+            }
+        },
+        {
+            "UpstreamPathTemplate": "/api/folders",
             "UpstreamHttpMethod": [ "Get" ],
-            "DownstreamPathTemplate": "/api/files/getFile",
-            "DownstreamScheme": "http",
-            "DownstreamHostAndPorts": [
-                {
-                    "Host": "localhost",
-                    "Port": 3002
-                }
-            ],
-            "AuthorizationOptions": {
-                "AuthenticationProviderKey": "Bearer",
-                "PolicyName": "cliente_valido",
-                "Scopes": [ "Files" ]
-            }
-        },
-        {
-            "UpstreamPathTemplate": "/api/ServerFile",
-            "UpstreamHttpMethod": [ "Delete" ],
-            "DownstreamPathTemplate": "/api/files/deleteFileServer",
-            "DownstreamScheme": "http",
-            "DownstreamHostAndPorts": [
-                {
-                    "Host": "localhost",
-                    "Port": 3002
-                }
-            ],
-            "AuthorizationOptions": {
-                "AuthenticationProviderKey": "Bearer",
-                "PolicyName": "cliente_valido",
-                "Scopes": [ "Files" ]
-            }
-        },
-        {
-            "UpstreamPathTemplate": "/api/FileShared",
-            "UpstreamHttpMethod": [ "Delete" ],
-            "DownstreamPathTemplate": "/api/files/deleteFileShared",
-            "DownstreamScheme": "http",
-            "DownstreamHostAndPorts": [
-                {
-                    "Host": "localhost",
-                    "Port": 3002
-                }
-            ],
-            "AuthorizationOptions": {
-                "AuthenticationProviderKey": "Bearer",
-                "PolicyName": "cliente_valido",
-                "Scopes": [ "Files" ]
-            }
-        },
-        {
-            "UpstreamPathTemplate": "/api/File",
-            "UpstreamHttpMethod": [ "Delete" ],
-            "DownstreamPathTemplate": "/api/files/deleteFile",
-            "DownstreamScheme": "http",
-            "DownstreamHostAndPorts": [
-                {
-                    "Host": "localhost",
-                    "Port": 3002
-                }
-            ],
-            "AuthorizationOptions": {
-                "AuthenticationProviderKey": "Bearer",
-                "PolicyName": "cliente_valido",
-                "Scopes": [ "Files" ]
-            }
-        },
-        {
-            "UpstreamPathTemplate": "/api/Folders",
-            "UpstreamHttpMethod": [ "Get" ],
-            "DownstreamPathTemplate": "/api/files/getFoldersByUser",
+            "DownstreamPathTemplate": "/api/files/foldersByUser",
             "DownstreamScheme": "http",
             "DownstreamHostAndPorts": [
                 {
@@ -298,9 +230,9 @@
             }
         }, 
         {
-            "UpstreamPathTemplate": "/api/UsersShare",
+            "UpstreamPathTemplate": "/api/usersShare",
             "UpstreamHttpMethod": [ "Get" ],
-            "DownstreamPathTemplate": "/api/files/getUsersShareFile",
+            "DownstreamPathTemplate": "/api/files/usersShareFile",
             "DownstreamScheme": "http",
             "DownstreamHostAndPorts": [
                 {
@@ -315,9 +247,9 @@
             }
         },
         {
-            "UpstreamPathTemplate": "/api/UsersOwner",
+            "UpstreamPathTemplate": "/api/usersOwner",
             "UpstreamHttpMethod": [ "Get" ],
-            "DownstreamPathTemplate": "/api/files/getUsersOwnerFile",
+            "DownstreamPathTemplate": "/api/files/usersOwnerFile",
             "DownstreamScheme": "http",
             "DownstreamHostAndPorts": [
                 {
@@ -332,9 +264,9 @@
             }
         },
         {
-            "UpstreamPathTemplate": "/api/FileInfo",
+            "UpstreamPathTemplate": "/api/fileInfo",
             "UpstreamHttpMethod": [ "Get" ],
-            "DownstreamPathTemplate": "/api/files/getListOfFileInfoByUser",
+            "DownstreamPathTemplate": "/api/files/listOfFileInfoByUser",
             "DownstreamScheme": "http",
             "DownstreamHostAndPorts": [
                 {
@@ -349,9 +281,9 @@
             }
         },
         {
-            "UpstreamPathTemplate": "/api/FileShared",
+            "UpstreamPathTemplate": "/api/fileShared",
             "UpstreamHttpMethod": [ "Get" ],
-            "DownstreamPathTemplate": "/api/files/getListOfFileSharedByUser",
+            "DownstreamPathTemplate": "/api/files/listOfFileSharedByUser",
             "DownstreamScheme": "http",
             "DownstreamHostAndPorts": [
                 {
@@ -386,25 +318,9 @@
             ]
         },
         {
-            "UpstreamPathTemplate": "/api/time",
+            "UpstreamPathTemplate": "/api/audit",
             "UpstreamHttpMethod": [ "Get" ],
-            "DownstreamPathTemplate": "/api/auth/time",
-            "DownstreamScheme": "http",
-            "DownstreamHostAndPorts": [
-                {
-                    "Host": "localhost",
-                    "Port": 3001
-                }
-            ],
-            "AuthorizationOptions": {
-                "AuthenticationProviderKey": "Bearer",
-                "PolicyName": "usuario_valido"
-            }
-        }, 
-        {
-            "UpstreamPathTemplate": "/api/Audit",
-            "UpstreamHttpMethod": [ "Get" ],
-            "DownstreamPathTemplate": "/api/auth/GetListAudit",
+            "DownstreamPathTemplate": "/api/auth/listAudit",
             "DownstreamScheme": "http",
             "DownstreamHostAndPorts": [
                 {

@@ -9,7 +9,7 @@ const { GenerateToken, VerifyToken } = require('../services/jwttokenservice');
 const { validationResult } = require('express-validator');
 
 let self = {};
-//POST: api/auth/
+
 self.login = async function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -57,15 +57,6 @@ self.login = async function (req, res) {
     }
 };
 
-//GET: api/auth/time
-self.getTime = async function (req, res) {
-    const time = VerifyToken(req);
-    if (time == null)
-        return res.status(404).send("null")
-    return res.status(200).send(time)
-}
-
-//GET: api/GetListAudit
 self.getListAudit = async function (req, res){
     try {    
 

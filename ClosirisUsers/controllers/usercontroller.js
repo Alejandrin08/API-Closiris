@@ -9,7 +9,7 @@ const User = models.user;
 const { Op, Sequelize } = require('sequelize');
 
 let self = {};
-//POST: api/users/userAccount
+
 self.createUserAccount = async function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -37,7 +37,6 @@ self.createUserAccount = async function (req, res) {
     }
 };
 
-//POST: api/users/user
 self.createUser = async function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -56,7 +55,6 @@ self.createUser = async function (req, res) {
     }
 }
 
-//PUT: api/users/putUserAccount
 self.updateUserAccount = async function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -84,7 +82,6 @@ self.updateUserAccount = async function (req, res) {
     }
 };
 
-//PATH: api/users/patchPassword
 self.updatePassword = async function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -109,7 +106,6 @@ self.updatePassword = async function (req, res) {
     }
 };
 
-//PATH: api/users/patchPlan
 self.updatePlan = async function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -134,7 +130,6 @@ self.updatePlan = async function (req, res) {
     }
 };
 
-//PATH: api/users/patchFreeStorage
 self.updateFreeStorage = async function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -158,7 +153,6 @@ self.updateFreeStorage = async function (req, res) {
     }
 };
 
-//GET: api/users/ValidateEmailDuplicity
 self.validateEmailDuplicity = async function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -177,7 +171,6 @@ self.validateEmailDuplicity = async function (req, res) {
     }
 };
 
-//GET: api/users/GetUserInfoById
 self.getUserInfoById = async function (req, res) {
     const userId = req.decoded[ClaimTypes.Id];
     try {
@@ -233,7 +226,7 @@ self.getUserInfoByEmail = async function (req, res){
                 name: userAccount.name
             };
 
-            return res.status(201).json( userData );
+            return res.status(200).json( userData );
         } else {
             return res.status(404).json({ message: "User not found" });
         
@@ -244,7 +237,6 @@ self.getUserInfoByEmail = async function (req, res){
     }
 }
 
-// GET: api/users/GetListUsers
 self.getListUsers = async function (req, res){
     try {    
 
@@ -252,7 +244,7 @@ self.getListUsers = async function (req, res){
             attributes: [ 'email', 'plan', 'freeStorage' ],
             where: {
                 plan: {
-                    [Op.ne]: 'Administrador' // Excluir plan "administrador"
+                    [Op.ne]: 'Administrador' 
                 }
             },
             include : [{

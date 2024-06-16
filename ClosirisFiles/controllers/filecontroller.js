@@ -23,10 +23,6 @@ User.hasMany(FileShared, { foreignKey: 'idUser' });
 const grpc = require('@grpc/grpc-js');
 const protoLoader = require('@grpc/proto-loader');
 const path = require('path');
-const fs = require('fs');
-const axios = require('axios');
-const { response } = require('express');
-const { Console } = require('console');
 
 const PROTO_PATH = path.join(__dirname, '../protos/file.proto');
 const packageDefinition = protoLoader.loadSync(PROTO_PATH);
@@ -59,8 +55,6 @@ async function sendFileToServer(userId, folderName, fileName, fileData) {
         console.log('Upload finished');
     });
 }
-
-
 
 async function deleteFileInServer(fileLocation) {
     const metadata = new grpc.Metadata();
@@ -116,7 +110,6 @@ async function receiveFileFromServer(locationFile) {
     });
 }
 
-//POST: api/files/file
 self.insertFile = async function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -154,7 +147,6 @@ self.insertFile = async function (req, res) {
     }
 };
 
-//GET: api/files/getFile/:id
 self.getFileFromServer = async function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -190,7 +182,6 @@ self.getFileFromServer = async function (req, res) {
     }
 };
 
-//Delete: api/files/deleteFile/:id
 self.deleteFilefromServer = async function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -217,7 +208,6 @@ self.deleteFilefromServer = async function (req, res) {
     }
 }
 
-//POST: api/files/fileOwner
 self.insertFileOwner = async function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -245,7 +235,6 @@ self.insertFileOwner = async function (req, res) {
     }
 };
 
-//POST: api/files/fileShared
 self.insertFileShared = async function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -284,7 +273,6 @@ self.insertFileShared = async function (req, res) {
     }
 };
 
-//DELETE: api/files/deleteFileShared
 self.deletefileShared = async function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -310,7 +298,6 @@ self.deletefileShared = async function (req, res) {
     }
 };
 
-//DELETE: api/files/deleteFileRegistration
 self.deleteFileRegistration = async function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -340,7 +327,6 @@ self.deleteFileRegistration = async function (req, res) {
     }
 };
 
-//GET: api/users/getUsersShareFile
 self.getUsersShareFile = async function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -423,7 +409,6 @@ self.getUsersOwnerFile = async function (req, res) {
     }
 };
 
-//GET: api/files/getFoldersByUser
 self.getFoldersByUser = async function (req, res) {
     const userId = req.decoded[ClaimTypes.Id];
     try {
@@ -454,7 +439,6 @@ self.getFoldersByUser = async function (req, res) {
     }
 };
 
-//GET: api/files/getListOfFileInfoByUser
 self.getListOfFileInfoByUser = async function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -501,7 +485,6 @@ self.getListOfFileSharedByUser = async function (req, res) {
         if (files.length === 0) {
             return res.status(404).json({ message: 'No files found for this user.' });
         }
-        //cambiar el formato para que regrese todo junto
         const transformedFiles = files.map(file => {
             const fileData = file.get({ plain: true });
             const creationDate = fileData.fileShareds[0].creationDate;

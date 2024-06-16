@@ -1,16 +1,20 @@
-# Use the official Python image from the Docker Hub
+# Usa una imagen base adecuada para tu aplicación
 FROM python:3.9-slim
 
-# Set the working directory in the container
+# Establece el directorio de trabajo
 WORKDIR /app
 
-# Copy the current directory contents into the container at /app
-COPY . /app
+# Copia el archivo requirements.txt al directorio de trabajo
+COPY requirements.txt /app/
 
-# Install any needed dependencies specified in requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+# Instala las dependencias necesarias
+RUN pip install -r requirements.txt
 
-# Make port 80 available to the world outside this container
+# Copia los archivos generados y otros archivos necesarios
+COPY file_pb2.py file_pb2_grpc.py /app/
+COPY fileServer.py /app/
+
+# Expone el puerto necesario para el servicio gRPC (si es necesario)
 EXPOSE 50051
 
 # Define environment variable
@@ -18,5 +22,5 @@ ENV NAME World
 ENV HOST localhost
 ENV PORT 50051
 
-# Run app.py when the container launches
+# Comando para ejecutar tu servidor gRPC
 CMD ["python", "fileServer.py"]

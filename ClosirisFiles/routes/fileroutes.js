@@ -33,62 +33,59 @@ const upload = multer({
     }
 });
 
-// POST: api/files/file
-
 router.post('/file',[
     check('folder_name').matches(/^(?!Compartidos\b)[\w\-]+$/).withMessage('Please provide a valid folder name ')
     ], Authorize('Premium,Básico'), upload.single('file'), fileController.insertFile);
-//POST: api/files/fileOwner
+
 
 router.post('/fileOwner', [
     check('file_id').isInt().withMessage('File id is requiered')
 ], Authorize('Premium,Básico'), fileController.insertFileOwner);
-//POST: api/files/fileShared
+
 
 router.post('/fileShared',[
     check('file_id').isInt().withMessage('File id is requiered'),
     check('shared_id').isInt().withMessage('Share id is requiered')
 ], Authorize('Premium'), fileController.insertFileShared);
 
-//GET: api/files/getFile/:id
 
-router.get('/getFile', [
+router.get('/file', [
     check('file_id').isInt().withMessage('File id is requiered')
 ],Authorize('Premium,Básico'),  fileController.getFileFromServer);
-//Delete: api/files/deleteFile/:id
 
-router.delete('/deleteFileServer',[
+
+router.delete('/fileServer',[
     check('file_id').isInt().withMessage('File id is requiered')
 ], Authorize('Premium,Básico'),  fileController.deleteFilefromServer);
-//DELETE: api/files/deleteFileShared
 
-router.delete('/deleteFileShared',[
+
+router.delete('/fileShared',[
     check('file_id').isInt().withMessage('File id is requiered')
 ], Authorize('Premium,Básico') ,fileController.deletefileShared);
-//DELETE: api/files/deleteFileRegistration
 
-router.delete('/deleteFile',[
+
+router.delete('/file',[
     check('file_id').isInt().withMessage('File id is requiered')
 ], Authorize('Premium,Básico'), fileController.deleteFileRegistration);
-//GET: api/users/getUsersShareFile
 
-router.get('/getUsersShareFile', [
+
+router.get('/usersShareFile', [
     check('file_id').isInt().withMessage('File id is requiered')
 ], Authorize('Premium,Básico'), fileController.getUsersShareFile );
-//GET: api/users/getUsersShareFile
 
-router.get('/getUsersOwnerFile', [
+
+router.get('/usersOwnerFile', [
     check('file_id').isInt().withMessage('File id is requiered')
 ],Authorize('Premium,Básico'), fileController.getUsersOwnerFile );
-//GET: api/files/getFoldersByUser
 
-router.get('/getFoldersByUser',Authorize('Premium,Básico'), fileController.getFoldersByUser);
-//GET: api/files/getListOfFileInfoByUser
 
-router.get('/getListOfFileInfoByUser', [
+router.get('/foldersByUser',Authorize('Premium,Básico'), fileController.getFoldersByUser);
+
+
+router.get('/listOfFileInfoByUser', [
     check('folder_name').matches(/^(?!Compartidos\b)[\w\-]+$/).withMessage('Please provide a valid folder name ')
     ],  Authorize('Premium,Básico'), fileController.getListOfFileInfoByUser);
 
 
-router.get('/getListOfFileSharedByUser',Authorize('Premium,Básico'), fileController.getListOfFileSharedByUser);
+router.get('/listOfFileSharedByUser',Authorize('Premium,Básico'), fileController.getListOfFileSharedByUser);
 module.exports = router;
