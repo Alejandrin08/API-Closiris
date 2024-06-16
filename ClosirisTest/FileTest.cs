@@ -1,53 +1,45 @@
 using ClosirisTest.DTOs;
 using System.Net.Http;
 using System.Net.Http.Json;
-using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using Xunit;
 using System.Net;
 using System.Net.Http.Headers;
 using Xunit.Abstractions;
 
-namespace ClosirisTest
-{
-    public class FileTest : IDisposable
-    {
+namespace ClosirisTest {
+    public class FileTest : IDisposable {
         private readonly HttpClient _client;
         private readonly ITestOutputHelper _output;
 
-        public FileTest(ITestOutputHelper output)
-        {
+        public FileTest(ITestOutputHelper output) {
             _output = output;
             _client = new HttpClient();
             _client.DefaultRequestHeaders.Add("accept", "application/json");
             _client.BaseAddress = new Uri("http://localhost:5089");
         }
 
+        [Fact]
+        public async Task InsertFile_Successful() {
 
-        public async Task InsertFile_Successful()
-        {
-
-            UserModel userModel1 = new UserModel
-            {
+            UserModel userModelLogin = new UserModel {
                 Email = "momaosiris@gmail.com",
                 Password = "123Pal_",
             };
 
-            var result1 = await _client.PostAsJsonAsync("api", userModel1);
-            result1.EnsureSuccessStatusCode();
+            var resultLogin = await _client.PostAsJsonAsync("api", userModelLogin);
+            resultLogin.EnsureSuccessStatusCode();
 
+            var responseLogin = await resultLogin.Content.ReadAsStringAsync();
+            var responseJsonLogin = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseLogin);
 
-            var response1 = await result1.Content.ReadAsStringAsync();
-            var responseJson1 = JsonConvert.DeserializeObject<Dictionary<string, string>>(response1);
-
-            Singleton.Instance.Token = responseJson1["token"];
+            Singleton.Instance.Token = responseJsonLogin["token"];
 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Singleton.Instance.Token);
 
             var fileContent = new ByteArrayContent(System.IO.File.ReadAllBytes("C:\\Users\\Palom\\Desktop\\Proyecto\\API-Closiris\\API-Closiris\\ClosirisTest\\Files\\pulpo.txt"));
 
-            var formData = new MultipartFormDataContent
-            {
+            var formData = new MultipartFormDataContent{
                 { fileContent, "file", "pulpo.txt" }
             };
 
@@ -56,20 +48,57 @@ namespace ClosirisTest
             var response = await _client.PostAsync("api/File", formData);
 
             var responseContent = await response.Content.ReadAsStringAsync();
-            _output.WriteLine("Response: " + responseContent);
 
             response.EnsureSuccessStatusCode();
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         }
 
+        [Fact]
+        public async Task InsertFile_Failed(){
 
-        public async Task InsertFile_Failed()
-        {
+            UserModel userModelLogin = new UserModel{
+                Email = "momaosiris@gmail.com",
+                Password = "123Pal_",
+            };
+
+            var resultLogin = await _client.PostAsJsonAsync("api", userModelLogin);
+            resultLogin.EnsureSuccessStatusCode();
+
+            var responseLogin = await resultLogin.Content.ReadAsStringAsync();
+            var responseJsonLogin = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseLogin);
+
+            Singleton.Instance.Token = responseJsonLogin["token"];
+
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Singleton.Instance.Token);
 
             var fileContent = new ByteArrayContent(System.IO.File.ReadAllBytes("C:\\Users\\Palom\\Desktop\\Proyecto\\API-Closiris\\API-Closiris\\ClosirisTest\\Files\\pulpo.txt"));
 
             var formData = new MultipartFormDataContent
             {
+                { fileContent, "file", "pulpo.txt" }
+            };
+
+            _client.DefaultRequestHeaders.Add("folder_name", "Compartidos");
+
+            var response = await _client.PostAsync("api/File", formData);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            var responseJson = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseContent);
+
+            Assert.True(responseJson.ContainsKey("errors"));
+
+            var errors = responseJson["errors"] as Newtonsoft.Json.Linq.JArray;
+            var firstError = errors[0].ToObject<Dictionary<string, string>>();
+
+            Assert.Equal("Please provide a valid folder name", firstError["msg"]);
+        }
+
+        [Fact]
+        public async Task InsertFile_Unauthorized() {
+            var fileContent = new ByteArrayContent(System.IO.File.ReadAllBytes("C:\\Users\\Palom\\Desktop\\Proyecto\\API-Closiris\\API-Closiris\\ClosirisTest\\Files\\pulpo.txt"));
+
+            var formData = new MultipartFormDataContent{
                 { fileContent, "file", "pulpo.txt" }
             };
 
@@ -79,124 +108,166 @@ namespace ClosirisTest
 
             var responseContent = await response.Content.ReadAsStringAsync();
 
-
-
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         }
 
-
-        public async Task InsertFileOwner_Successful()
-        {
-
-            UserModel userModel1 = new UserModel
-            {
+        [Fact]
+        public async Task InsertFileOwner_Successful(){
+            UserModel userModelLogin = new UserModel {
                 Email = "momaosiris@gmail.com",
                 Password = "123Pal_",
             };
 
-            var result1 = await _client.PostAsJsonAsync("api", userModel1);
-            result1.EnsureSuccessStatusCode();
+            var resultLogin = await _client.PostAsJsonAsync("api", userModelLogin);
+            resultLogin.EnsureSuccessStatusCode();
 
+            var responseLogin = await resultLogin.Content.ReadAsStringAsync();
+            var responseJsonLogin = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseLogin);
 
-            var response1 = await result1.Content.ReadAsStringAsync();
-            var responseJson1 = JsonConvert.DeserializeObject<Dictionary<string, string>>(response1);
-
-            Singleton.Instance.Token = responseJson1["token"];
+            Singleton.Instance.Token = responseJsonLogin["token"];
 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Singleton.Instance.Token);
-
-
             _client.DefaultRequestHeaders.Add("file_id", "1");
 
             var response = await _client.PostAsync("api/FileOwner", null);
 
             var responseContent = await response.Content.ReadAsStringAsync();
-            _output.WriteLine("Response: " + responseContent);
-
             response.EnsureSuccessStatusCode();
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         }
 
+        [Fact]
+        public async Task InsertFileOwner_Failed(){
+            UserModel userModelLogin = new UserModel{
+                Email = "momaosiris@gmail.com",
+                Password = "123Pal_",
+            };
 
-        public async Task InsertFileOwner_Failed()
-        {
+            var resultLogin = await _client.PostAsJsonAsync("api", userModelLogin);
+            resultLogin.EnsureSuccessStatusCode();
 
+            var responseLogin = await resultLogin.Content.ReadAsStringAsync();
+            var responseJsonLogin = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseLogin);
+
+            Singleton.Instance.Token = responseJsonLogin["token"];
+
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Singleton.Instance.Token);
+            _client.DefaultRequestHeaders.Add("file_id", "X");
+
+            var response = await _client.PostAsync("api/FileOwner", null);
+            var responseContent = await response.Content.ReadAsStringAsync();
+            
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            var responseJson = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseContent);
+
+            Assert.True(responseJson.ContainsKey("errors"));
+
+            var errors = responseJson["errors"] as Newtonsoft.Json.Linq.JArray;
+            var firstError = errors[0].ToObject<Dictionary<string, string>>();
+
+            Assert.Equal("File id is requiered", firstError["msg"]);
+        }
+
+        [Fact]
+        public async Task InsertFileOwner_Unauthorized(){
             _client.DefaultRequestHeaders.Add("file_id", "2");
 
             var response = await _client.PostAsync("api/FileOwner", null);
 
             var responseContent = await response.Content.ReadAsStringAsync();
-            _output.WriteLine("Response: " + responseContent);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         }
 
+        [Fact]
+        public async Task InsertFileShared_Successful() {
 
-        public async Task InsertFileShared_Successful()
-        {
-
-            UserModel userModel1 = new UserModel
-            {
+            UserModel userModelLogin = new UserModel {
                 Email = "momaosiris@gmail.com",
                 Password = "123Pal_",
             };
 
-            var result1 = await _client.PostAsJsonAsync("api", userModel1);
-            result1.EnsureSuccessStatusCode();
+            var resultLogin = await _client.PostAsJsonAsync("api", userModelLogin);
+            resultLogin.EnsureSuccessStatusCode();
 
+            var responseLogin = await resultLogin.Content.ReadAsStringAsync();
+            var responseJsonLogin = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseLogin);
 
-            var response1 = await result1.Content.ReadAsStringAsync();
-            var responseJson1 = JsonConvert.DeserializeObject<Dictionary<string, string>>(response1);
+            Singleton.Instance.Token = responseJsonLogin["token"];
 
-            Singleton.Instance.Token = responseJson1["token"];
-
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Singleton.Instance.Token);
-            ///exista el otro user
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Singleton.Instance.Token); 
             _client.DefaultRequestHeaders.Add("shared_id", "2");
             _client.DefaultRequestHeaders.Add("file_id", "1");
 
             var response = await _client.PostAsync("api/FileShared", null);
 
             var responseContent = await response.Content.ReadAsStringAsync();
-            _output.WriteLine("Response: " + responseContent);
 
             response.EnsureSuccessStatusCode();
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         }
 
+        [Fact]        
+         public async Task InsertFileShared_Failed() {
 
-        public async Task InsertFileShared_Failed()
-        {
-            ///exista el otro user
+            UserModel userModelLogin = new UserModel {
+                Email = "momaosiris@gmail.com",
+                Password = "123Pal_",
+            };
+
+            var resultLogin = await _client.PostAsJsonAsync("api", userModelLogin);
+            resultLogin.EnsureSuccessStatusCode();
+
+            var responseLogin = await resultLogin.Content.ReadAsStringAsync();
+            var responseJsonLogin = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseLogin);
+
+            Singleton.Instance.Token = responseJsonLogin["token"];
+
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Singleton.Instance.Token); 
+            _client.DefaultRequestHeaders.Add("shared_id", "2");
+            _client.DefaultRequestHeaders.Add("file_id", "Y");
+
+            var response = await _client.PostAsync("api/FileShared", null);
+            var responseContent = await response.Content.ReadAsStringAsync();
+            
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            var responseJson = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseContent);
+
+            Assert.True(responseJson.ContainsKey("errors"));
+
+            var errors = responseJson["errors"] as Newtonsoft.Json.Linq.JArray;
+            var firstError = errors[0].ToObject<Dictionary<string, string>>();
+
+            Assert.Equal("File id is requiered", firstError["msg"]);
+        }
+
+        [Fact]
+        public async Task InsertFileShared_Unauthorized() {
             _client.DefaultRequestHeaders.Add("shared_id", "1");
             _client.DefaultRequestHeaders.Add("file_id", "1");
 
             var response = await _client.PostAsync("api/FileShared", null);
 
             var responseContent = await response.Content.ReadAsStringAsync();
-            _output.WriteLine("Response: " + responseContent);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         }
 
+        [Fact]
+        public async Task DeleteFileShared_Successful(){
 
-        public async Task DeleteFileShared_Successful()
-        {
-
-            UserModel userModel1 = new UserModel
-            {
+            UserModel userModelLogin = new UserModel{
                 Email = "momaosiris@gmail.com",
                 Password = "123Pal_",
             };
 
-            var result1 = await _client.PostAsJsonAsync("api", userModel1);
-            result1.EnsureSuccessStatusCode();
+            var resultLogin = await _client.PostAsJsonAsync("api", userModelLogin);
+            resultLogin.EnsureSuccessStatusCode();
 
+            var responseLogin = await resultLogin.Content.ReadAsStringAsync();
+            var responseJsonLogin = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseLogin);
 
-            var response1 = await result1.Content.ReadAsStringAsync();
-            var responseJson1 = JsonConvert.DeserializeObject<Dictionary<string, string>>(response1);
-
-            Singleton.Instance.Token = responseJson1["token"];
+            Singleton.Instance.Token = responseJsonLogin["token"];
 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Singleton.Instance.Token);
             _client.DefaultRequestHeaders.Add("file_id", "1");
@@ -204,58 +275,265 @@ namespace ClosirisTest
             var response = await _client.DeleteAsync("api/FileShared");
 
             var responseContent = await response.Content.ReadAsStringAsync();
-            _output.WriteLine("Response: " + responseContent);
 
             response.EnsureSuccessStatusCode();
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
 
+        [Fact]
+        public async Task DeleteFileShared_Failed() {
 
-        public async Task DeleteFileShared_Failed()
-        {
-
-            UserModel userModel1 = new UserModel
-            {
+            UserModel userModelLogin = new UserModel{
                 Email = "momaosiris@gmail.com",
                 Password = "123Pal_",
             };
 
-            var result1 = await _client.PostAsJsonAsync("api", userModel1);
-            result1.EnsureSuccessStatusCode();
+            var resultLogin = await _client.PostAsJsonAsync("api", userModelLogin);
+            resultLogin.EnsureSuccessStatusCode();
 
+            var responseLogin = await resultLogin.Content.ReadAsStringAsync();
+            var responseJsonLogin = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseLogin);
 
-            var response1 = await result1.Content.ReadAsStringAsync();
-            var responseJson1 = JsonConvert.DeserializeObject<Dictionary<string, string>>(response1);
-
-            Singleton.Instance.Token = responseJson1["token"];
+            Singleton.Instance.Token = responseJsonLogin["token"];
 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Singleton.Instance.Token);
-            ///exista el otro user
-            _client.DefaultRequestHeaders.Add("file_id", "10");
+            _client.DefaultRequestHeaders.Add("file_id", "X");
 
             var response = await _client.DeleteAsync("api/FileShared");
 
             var responseContent = await response.Content.ReadAsStringAsync();
-            _output.WriteLine("Response: " + responseContent);
+            
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            var responseJson = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseContent);
 
-            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            Assert.True(responseJson.ContainsKey("errors"));
+
+            var errors = responseJson["errors"] as Newtonsoft.Json.Linq.JArray;
+            var firstError = errors[0].ToObject<Dictionary<string, string>>();
+
+            Assert.Equal("File id is requiered", firstError["msg"]);
         }
 
-        public async Task DeleteFileFromServer_Successful()
-        {
-            UserModel userModel1 = new UserModel
-            {
+        [Fact]
+        public async Task DeleteFileShared_Unauthorized(){
+
+            _client.DefaultRequestHeaders.Add("file_id", "1");
+
+            var response = await _client.DeleteAsync("api/FileShared");
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task GetFoldersByUser_Successful(){
+
+            UserModel userModelLogin = new UserModel {
+                Email = "cami@gmail.com",
+                Password = "123Cami_",
+            };
+
+            var resultLogin = await _client.PostAsJsonAsync("api", userModelLogin);
+            resultLogin.EnsureSuccessStatusCode();
+
+            var responseLogin = await resultLogin.Content.ReadAsStringAsync();
+            var responseJsonLogin = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseLogin);
+
+            Singleton.Instance.Token = responseJsonLogin["token"];
+
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Singleton.Instance.Token);
+            
+            var response = await _client.GetAsync("api/Folders");
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var folders = JsonConvert.DeserializeObject<List<string>>(responseContent);
+
+            response.EnsureSuccessStatusCode();
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotNull(folders);
+            Assert.Single(folders);
+            Assert.Equal("Proyecto", folders[0]);
+        }
+
+        [Fact]
+        public async Task GetFoldersByUser_Unauthorized() {
+
+            var response = await _client.GetAsync("api/Folders");
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+
+        }
+
+        [Fact]
+        public async Task GetUsersOwnerFile_Successful() {
+
+            UserModel userModelLogin = new UserModel {
                 Email = "momaosiris@gmail.com",
                 Password = "123Pal_",
             };
 
-            var result1 = await _client.PostAsJsonAsync("api", userModel1);
-            result1.EnsureSuccessStatusCode();
+            var resultLogin = await _client.PostAsJsonAsync("api", userModelLogin);
+            resultLogin.EnsureSuccessStatusCode();
 
-            var response1 = await result1.Content.ReadAsStringAsync();
-            var responseJson1 = JsonConvert.DeserializeObject<Dictionary<string, string>>(response1);
+            var responseLogin = await resultLogin.Content.ReadAsStringAsync();
+            var responseJsonLogin = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseLogin);
 
-            Singleton.Instance.Token = responseJson1["token"];
+            Singleton.Instance.Token = responseJsonLogin["token"];
+
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Singleton.Instance.Token);
+            _client.DefaultRequestHeaders.Add("file_id", "2");
+
+            var response = await _client.GetAsync("api/UsersOwner");
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var usersOwner = JsonConvert.DeserializeObject<List<UserModel>>(responseContent);
+
+            response.EnsureSuccessStatusCode();
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            Assert.NotNull(usersOwner);
+            Assert.Single(usersOwner);
+            Assert.Equal("Camila", usersOwner[0].Name);
+        }
+
+        [Fact]
+        public async Task GetUsersOwnerFile_Failed() {
+
+            UserModel userModelLogin = new UserModel {
+                Email = "momaosiris@gmail.com",
+                Password = "123Pal_",
+            };
+
+            var resultLogin = await _client.PostAsJsonAsync("api", userModelLogin);
+            resultLogin.EnsureSuccessStatusCode();
+
+            var responseLogin = await resultLogin.Content.ReadAsStringAsync();
+            var responseJsonLogin = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseLogin);
+
+            Singleton.Instance.Token = responseJsonLogin["token"];
+
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Singleton.Instance.Token);
+            _client.DefaultRequestHeaders.Add("file_id", "");
+
+            var response = await _client.GetAsync("api/UsersOwner");
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            var responseJson = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseContent);
+
+            Assert.True(responseJson.ContainsKey("errors"));
+
+            var errors = responseJson["errors"] as Newtonsoft.Json.Linq.JArray;
+            var firstError = errors[0].ToObject<Dictionary<string, string>>();
+
+            Assert.Equal("File id is requiered", firstError["msg"]);
+        }
+
+        [Fact]
+        public async Task GetUsersOwnerFile_Unauthorized() {
+
+            _client.DefaultRequestHeaders.Add("file_id", "2");
+
+            var response = await _client.GetAsync("api/UsersOwner");
+ 
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            
+        }
+
+        [Fact]
+        public async Task GetUsersShareFile_Successful() {
+
+            UserModel userModelLogin = new UserModel {
+                Email = "momaosiris@gmail.com",
+                Password = "123Pal_",
+            };
+
+            var resultLogin = await _client.PostAsJsonAsync("api", userModelLogin);
+            resultLogin.EnsureSuccessStatusCode();
+
+            var responseLogin = await resultLogin.Content.ReadAsStringAsync();
+            var responseJsonLogin = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseLogin);
+
+            Singleton.Instance.Token = responseJsonLogin["token"];
+
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Singleton.Instance.Token);
+            _client.DefaultRequestHeaders.Add("file_id", "2");
+
+            var response = await _client.GetAsync("api/UsersShare");
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var usersOwner = JsonConvert.DeserializeObject<List<UserModel>>(responseContent);
+
+            response.EnsureSuccessStatusCode();
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            Assert.NotNull(usersOwner);
+            Assert.Single(usersOwner);
+            Assert.Equal("Paloma", usersOwner[0].Name);
+        }
+
+        [Fact]
+        public async Task GetUsersShareFile_Failed() {
+
+            UserModel userModelLogin = new UserModel {
+                Email = "momaosiris@gmail.com",
+                Password = "123Pal_",
+            };
+
+            var resultLogin = await _client.PostAsJsonAsync("api", userModelLogin);
+            resultLogin.EnsureSuccessStatusCode();
+
+            var responseLogin = await resultLogin.Content.ReadAsStringAsync();
+            var responseJsonLogin = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseLogin);
+
+            Singleton.Instance.Token = responseJsonLogin["token"];
+
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Singleton.Instance.Token);
+            _client.DefaultRequestHeaders.Add("file_id", "");
+
+            var response = await _client.GetAsync("api/UsersShare");
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            var responseJson = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseContent);
+
+            Assert.True(responseJson.ContainsKey("errors"));
+
+            var errors = responseJson["errors"] as Newtonsoft.Json.Linq.JArray;
+            var firstError = errors[0].ToObject<Dictionary<string, string>>();
+
+            Assert.Equal("File id is requiered", firstError["msg"]);
+        }
+
+        [Fact]
+        public async Task GetUsersShareFile_Unauthorized(){
+
+            _client.DefaultRequestHeaders.Add("file_id", "2");
+
+            var response = await _client.GetAsync("api/UsersShare");
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            
+        }
+
+        [Fact]
+        public async Task DeleteFileFromServer_Successful() {
+            UserModel userModelLogin = new UserModel {
+                Email = "momaosiris@gmail.com",
+                Password = "123Pal_",
+            };
+
+            var resultLogin = await _client.PostAsJsonAsync("api", userModelLogin);
+            resultLogin.EnsureSuccessStatusCode();
+
+            var responseLogin = await resultLogin.Content.ReadAsStringAsync();
+            var responseJsonLogin = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseLogin);
+
+            Singleton.Instance.Token = responseJsonLogin["token"];
 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Singleton.Instance.Token);
 
@@ -269,21 +547,20 @@ namespace ClosirisTest
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
 
-        public async Task DeleteFileFromServer_Failed()
-        {
-            UserModel userModel1 = new UserModel
-            {
+        [Fact]
+        public async Task DeleteFileFromServer_Failed() {
+            UserModel userModelLogin = new UserModel {
                 Email = "momaosiris@gmail.com",
                 Password = "123Pal_",
             };
 
-            var result1 = await _client.PostAsJsonAsync("api", userModel1);
-            result1.EnsureSuccessStatusCode();
+            var resultLogin = await _client.PostAsJsonAsync("api", userModelLogin);
+            resultLogin.EnsureSuccessStatusCode();
 
-            var response1 = await result1.Content.ReadAsStringAsync();
-            var responseJson1 = JsonConvert.DeserializeObject<Dictionary<string, string>>(response1);
+            var responseLogin = await resultLogin.Content.ReadAsStringAsync();
+            var responseJsonLogin = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseLogin);
 
-            Singleton.Instance.Token = responseJson1["token"];
+            Singleton.Instance.Token = responseJsonLogin["token"];
 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Singleton.Instance.Token);
             _client.DefaultRequestHeaders.Add("file_id", "X");
@@ -302,8 +579,8 @@ namespace ClosirisTest
             Assert.Equal("File id is requiered", firstError["msg"]);
         }
 
-        public async Task DeleteFileFromServer_Unauthorized()
-        {
+        [Fact]
+        public async Task DeleteFileFromServer_Unauthorized() {
             _client.DefaultRequestHeaders.Add("file_id", "1");
 
             var response = await _client.DeleteAsync("api/ServerFile");
@@ -312,22 +589,19 @@ namespace ClosirisTest
         }
 
         [Fact]
-        public async Task DeleteFileRegistration_Successful()
-        {
-            UserModel userModel1 = new UserModel
-            {
+        public async Task DeleteFileRegistration_Successful() {
+            UserModel userModelLogin = new UserModel {
                 Email = "momaosiris@gmail.com",
                 Password = "123Pal_",
             };
 
-            var result1 = await _client.PostAsJsonAsync("api", userModel1);
+            var resultLogin = await _client.PostAsJsonAsync("api", userModelLogin);
+            resultLogin.EnsureSuccessStatusCode();
 
-            result1.EnsureSuccessStatusCode();
+            var responseLogin = await resultLogin.Content.ReadAsStringAsync();
+            var responseJsonLogin = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseLogin);
 
-            var response1 = await result1.Content.ReadAsStringAsync();
-            var responseJson1 = JsonConvert.DeserializeObject<Dictionary<string, string>>(response1);
-
-            Singleton.Instance.Token = responseJson1["token"];
+            Singleton.Instance.Token = responseJsonLogin["token"];
 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Singleton.Instance.Token);
 
@@ -342,22 +616,20 @@ namespace ClosirisTest
         }
 
         [Fact]
-        public async Task DeleteFileRegistration_Failed()
-        {
-            UserModel userModel1 = new UserModel
-            {
+        public async Task DeleteFileRegistration_Failed() {
+            UserModel userModelLogin = new UserModel {
                 Email = "momaosiris@gmail.com",
                 Password = "123Pal_",
             };
 
-            var result1 = await _client.PostAsJsonAsync("api", userModel1);
+            var resultLogin = await _client.PostAsJsonAsync("api", userModelLogin);
 
-            result1.EnsureSuccessStatusCode();
+            resultLogin.EnsureSuccessStatusCode();
 
-            var response1 = await result1.Content.ReadAsStringAsync();
-            var responseJson1 = JsonConvert.DeserializeObject<Dictionary<string, string>>(response1);
+            var responseLogin = await resultLogin.Content.ReadAsStringAsync();
+            var responseJsonLogin = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseLogin);
 
-            Singleton.Instance.Token = responseJson1["token"];
+            Singleton.Instance.Token = responseJsonLogin["token"];
 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Singleton.Instance.Token);
             _client.DefaultRequestHeaders.Add("file_id", "X");
@@ -377,8 +649,7 @@ namespace ClosirisTest
         }
 
         [Fact]
-        public async Task DeleteFileRegistration_Unauthorized()
-        {
+        public async Task DeleteFileRegistration_Unauthorized() {
             _client.DefaultRequestHeaders.Add("file_id", "1");
 
             var response = await _client.DeleteAsync("api/File");
@@ -386,8 +657,7 @@ namespace ClosirisTest
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         }
 
-        public void Dispose()
-        {
+        public void Dispose() {
             _client.Dispose();
         }
 
