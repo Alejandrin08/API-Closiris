@@ -7,6 +7,7 @@ const { validationResult } = require('express-validator');
 const UserAccount = models.userAccount;
 const User = models.user;
 const { Op, Sequelize } = require('sequelize');
+const { sendAuditMessage } = require('../services/rabbitmqservice');
 
 let self = {};
 
@@ -75,7 +76,8 @@ self.updateUserAccount = async function (req, res) {
             await user.save();
 
             req.Audit("ActualizarCuenta", user.id);
-
+            await sendAuditMessage("ActualizarCuenta", user.id);
+            
             return res.status(200).json({ message: "User updated successfully", user: user });
         }
     } catch (error) {

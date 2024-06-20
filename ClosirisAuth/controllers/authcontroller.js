@@ -5,8 +5,9 @@ const UserAccount = models.userAccount;
 const User = models.user;
 const Audit = models.audit;
 const bcrypt = require('bcrypt');
-const { GenerateToken, VerifyToken } = require('../services/jwttokenservice');
+const { GenerateToken } = require('../services/jwttokenservice');
 const { validationResult } = require('express-validator');
+const { sendAuditMessage } = require('../services/rabbitmqservice');
 
 let self = {};
 
@@ -44,6 +45,7 @@ self.login = async function (req, res) {
         const token = GenerateToken(data.email, data.id, data.name, userData ? userData.plan : 'Sin rol');
 
         req.Audit("Login", data.id);
+        await sendAuditMessage("Login", data.id);
 
         return res.status(200).json({
             email: data.email,

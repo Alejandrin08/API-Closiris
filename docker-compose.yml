@@ -43,6 +43,14 @@ services:
     volumes:
       - ClosirisFiles:/app/ClosirisFiles
 
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    network_mode: "host"
+
 volumes:
   ClosirisFiles:
     driver: local
