@@ -29,6 +29,7 @@ self.createUserAccount = async function (req, res) {
             name: req.body.name,
             imageProfile: imageBuffer
         });
+        console.log(data);
 
         return res.status(201).json({ user: data });
     } catch (error) {
@@ -194,7 +195,7 @@ self.getUserInfoById = async function (req, res) {
                 freeStorage:user.freeStorage,
                 imageProfile: userAccount.imageProfile ? userAccount.imageProfile.toString('base64') : null
             };
-
+            console.log(userData);
             return res.status(200).json(userData);
         } else {
             return res.status(404).json({ message: "User not found" });
@@ -206,30 +207,30 @@ self.getUserInfoById = async function (req, res) {
     }
 };
 
-self.getUserInfoByEmail = async function (req, res){
+self.getUserInfoByEmail = async function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
     const emailUser = req.params.email;
-    try {    
+    try {
 
         const userAccount = await UserAccount.findOne({
             attributes: ['id', 'name'],
             where: {
-              email: emailUser
+                email: emailUser
             }
         });
         if (userAccount) {
             const userData = {
-                id : userAccount.id,
+                id: userAccount.id,
                 name: userAccount.name
             };
 
-            return res.status(200).json( userData );
+            return res.status(200).json(userData);
         } else {
             return res.status(404).json({ message: "User not found" });
-        
+
         }
     } catch (error) {
         console.error('Error:', error);
@@ -237,24 +238,24 @@ self.getUserInfoByEmail = async function (req, res){
     }
 }
 
-self.getListUsers = async function (req, res){
-    try {    
+self.getListUsers = async function (req, res) {
+    try {
 
         const users = await User.findAll({
-            attributes: [ 'email', 'plan', 'freeStorage' ],
+            attributes: ['email', 'plan', 'freeStorage'],
             where: {
                 plan: {
-                    [Op.ne]: 'Administrador' 
+                    [Op.ne]: 'Administrador'
                 }
             },
-            include : [{
+            include: [{
                 model: UserAccount,
                 as: 'userAccount',
                 attributes: ['name'],
                 required: true,
                 email: {
                     [Op.eq]: sequelize.col('userAccount.email')
-                  }
+                }
             }]
         });
         if (users) {
@@ -268,10 +269,10 @@ self.getListUsers = async function (req, res){
                 };
             });
 
-            return res.status(201).json( transformedResult );
+            return res.status(201).json(transformedResult);
         } else {
             return res.status(404).json({ message: "User not found" });
-        
+
         }
     } catch (error) {
         console.error('Error:', error);

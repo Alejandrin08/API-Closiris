@@ -15,7 +15,7 @@ router.post('/userAccount', [
   check('email').isEmail().withMessage('Please provide a valid email address'),
   check('password').matches(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{5,15}$/).withMessage('Password must comply with a password policy '),
   check('name').matches(/^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]*$/).withMessage('Name is required'),
-  check('imageProfile').optional().isBase64().withMessage('Image profile must be a base64 string')
+  check('imageProfile').optional()
   ], uploadImage, userAccount.createUserAccount);
 
 

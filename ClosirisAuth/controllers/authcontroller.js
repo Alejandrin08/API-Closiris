@@ -49,7 +49,7 @@ self.login = async function (req, res) {
             email: data.email,
             name: data.name,
             role: userData ? userData.plan : 'Sin rol',
-            token: token
+            jwt: token
         });
     } catch (error) {
         console.error(error);
