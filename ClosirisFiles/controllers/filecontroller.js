@@ -4,6 +4,7 @@ const sequelize = require('../models/sequelize');
 const models = initModels(sequelize);
 const { Op, Sequelize } = require('sequelize');
 const { validationResult } = require('express-validator');
+
 const dotenv = require('dotenv');
 dotenv.config();
 const File = models.file;
@@ -113,6 +114,7 @@ async function receiveFileFromServer(locationFile) {
 self.insertFile = async function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+        console.log("Errores de validación:", errors.array());
         return res.status(400).json({ errors: errors.array() });
     }
     const MAX_FILE_SIZE = 4 * 1024 * 1024;
@@ -442,11 +444,13 @@ self.getFoldersByUser = async function (req, res) {
 self.getListOfFileInfoByUser = async function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+        console.log("Errores de validación:", errors.array());
         return res.status(400).json({ errors: errors.array() });
     }
     const userId = req.decoded[ClaimTypes.Id];
     const folderName = req.headers['folder_name'];
     try {
+        console.log(folderName);
         const files = await File.findAll({
             attributes: [
                 'id',
@@ -483,7 +487,7 @@ self.getListOfFileSharedByUser = async function (req, res) {
         });
 
         if (files.length === 0) {
-            return res.status(404).json({ message: 'No files found for this user.' });
+            return res.status(200).json();
         }
         const transformedFiles = files.map(file => {
             const fileData = file.get({ plain: true });

@@ -3,7 +3,6 @@ const multer = require('multer');
 const router = express.Router();
 const fileController = require('../controllers/filecontroller');
 const Authorize = require('../middlewares/authmiddleware');
-const file = require('../models/file');
 const { check, validationResult } = require('express-validator');
 
 const storage = multer.memoryStorage();
@@ -28,14 +27,14 @@ const upload = multer({
         if (allowedTypes.includes(file.mimetype)) {
             cb(null, true);
         } else {
-            cb(new Error('Tipo de archivo no permitido'));
+            const error = new Error(`Tipo de archivo no permitido: ${file.mimetype}. Nombre del archivo: ${file.originalname}`);
+            error.code = 'LIMIT_FILE_TYPE';
+            cb(error);
         }
     }
 });
 
-router.post('/file',[
-    check('folder_name').matches(/^(?!Compartidos\b)[\w\-]+$/).withMessage('Please provide a valid folder name ')
-    ], Authorize('Premium,Básico'), upload.single('file'), fileController.insertFile);
+router.post('/file', Authorize('Premium,Básico'), upload.single('file'), fileController.insertFile);
 
 
 router.post('/fileOwner', [

@@ -195,7 +195,7 @@ self.getUserInfoById = async function (req, res) {
                 freeStorage:user.freeStorage,
                 imageProfile: userAccount.imageProfile ? userAccount.imageProfile.toString('base64') : null
             };
-            console.log(userData);
+            
             return res.status(200).json(userData);
         } else {
             return res.status(404).json({ message: "User not found" });
