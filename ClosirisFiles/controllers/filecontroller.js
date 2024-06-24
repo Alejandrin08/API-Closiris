@@ -1,6 +1,7 @@
 const ClaimTypes = require('../config/claimtypes');
 const initModels = require('../models/init-models');
 const sequelize = require('../models/sequelize');
+const { sendAuditMessage } = require('../services/rabbitmqservice');
 const models = initModels(sequelize);
 const { Op, Sequelize } = require('sequelize');
 const { validationResult } = require('express-validator');
@@ -141,6 +142,7 @@ self.insertFile = async function (req, res) {
         await sendFileToServer(userId, folderName, fileName, fileData);
 
         req.Audit("AgregarArchivo", userId);
+        await sendAuditMessage("AgregarArchivo", userId);
 
         return res.status(201).json({ message: 'Archivo registrado con éxito', id: file.id });
     } catch (error) {
@@ -229,6 +231,7 @@ self.insertFileOwner = async function (req, res) {
         });
 
         req.Audit("AgregarArchivoPropio", userId);
+        await sendAuditMessage("AgregarArchivoPropio", userId);
 
         return res.status(201).json({ message: "File owner registered successfully", file: data });
     } catch (error) {
@@ -268,6 +271,7 @@ self.insertFileShared = async function (req, res) {
         });
 
         req.Audit("AgregarArchivoCompartido", userId);
+        await sendAuditMessage("AgregarArchivoCompartido", userId);
 
         return res.status(201).json({ message: "File shared register successfully", file: data });
     } catch (error) {
@@ -293,6 +297,7 @@ self.deletefileShared = async function (req, res) {
         await file.destroy();
 
         req.Audit("EliminarArchivoCompartido", userId);
+        await sendAuditMessage("EliminarArchivoCompartido", userId);
 
         return res.status(200).json({ message: "file deleted successfully" });
     } catch (error) {
@@ -433,6 +438,7 @@ self.getFoldersByUser = async function (req, res) {
         const uniqueFolders = [...new Set(folders)];
 
         req.Audit("ObtenerCarpetas", userId);
+        await sendAuditMessage("ObtenerCarpetas", userId);
 
         return res.status(200).json(uniqueFolders);
     } catch (error) {
@@ -466,6 +472,7 @@ self.getListOfFileInfoByUser = async function (req, res) {
         });
 
         req.Audit("ObtenerArchivos", userId);
+        await sendAuditMessage("ObtenerArchivos", userId);
 
         return res.status(200).json(files);
     } catch (error) {
@@ -497,6 +504,7 @@ self.getListOfFileSharedByUser = async function (req, res) {
         });
 
         req.Audit("ObtenerArchivosCompartidos", userId);
+        await sendAuditMessage("ObtenerArchivosCompartidos", userId);
 
         return res.status(200).json(transformedFiles);
     } catch (error) {
